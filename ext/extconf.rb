@@ -35,27 +35,11 @@ need lua
 EOL
 end
 
-if dir_config( "lua50" ) != [nil, nil]
-  inc, lib = dir_config( 'lua50' )
-  $LDFLAGS << " -L#{lib} -llualib50 -llua50"
-  $CFLAGS << " -I#{inc}"
-elsif dir_config( "lua" ) != [nil, nil]
-  inc, lib = dir_config( 'lua' )
-  $LDFLAGS << " -L#{lib} -llualib -llua"
-  $CFLAGS << " -I#{inc}"
-elsif dir_config( "lua51" ) != [nil, nil]
-  inc, lib = dir_config( 'lua51' )
-  $LDFLAGS << " -L#{lib} -llua5.1"
-  $CFLAGS << " -I#{inc}"
-elsif dir_config( "lua52" ) != [nil, nil]
-  inc, lib = dir_config( 'lua52' )
-  $LDFLAGS << " -L#{lib} -llua5.2"
-  $CFLAGS << " -I#{inc}"
-elsif ex = find_executable( "lua-config" )
+if ex = find_executable( "lua-config" )
   $LDFLAGS << ' ' + `#{ex} --libs`.chomp
   $CFLAGS << ' ' + `#{ex} --include`.chomp
 elsif ex = find_executable( "pkg-config" )
-  found = ["lua", "lua5.1", "lua5.2"].any? do |l|
+  found = ["lua", "lua5.2", "lua5.1"].any? do |l|
     ldf = `#{ex} --libs #{l}`.chomp
     cf = `#{ex} --cflags #{l}`.chomp
     next false if ldf.empty? and cf.empty?
@@ -68,6 +52,22 @@ elsif ex = find_executable( "pkg-config" )
   if !found
     crash_lua_not_found()
   end
+elsif dir_config( "lua" ) != [nil, nil]
+  inc, lib = dir_config( 'lua' )
+  $LDFLAGS << " -L#{lib} -llualib -llua"
+  $CFLAGS << " -I#{inc}"
+elsif dir_config( "lua53" ) != [nil, nil]
+  inc, lib = dir_config( 'lua53' )
+  $LDFLAGS << " -L#{lib} -llua5.3"
+  $CFLAGS << " -I#{inc}"
+elsif dir_config( "lua52" ) != [nil, nil]
+  inc, lib = dir_config( 'lua52' )
+  $LDFLAGS << " -L#{lib} -llua5.2"
+  $CFLAGS << " -I#{inc}"
+elsif dir_config( "lua51" ) != [nil, nil]
+  inc, lib = dir_config( 'lua51' )
+  $LDFLAGS << " -L#{lib} -llua5.1"
+  $CFLAGS << " -I#{inc}"
 else
   crash_lua_not_found()
 end
